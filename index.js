@@ -1,9 +1,7 @@
 const fs = require('fs');
 const zlib = require('zlib');
 const path = require('path');
-
-const inputPath = process.argv[2];
-const compressedFile = inputPath + '.zip';
+const archiver = require('archiver');
 
 const compress = (source, destination) => {
   const sourcePath = path.join(__dirname, source);
@@ -16,7 +14,7 @@ const compress = (source, destination) => {
   }
 
   const output = fs.createWriteStream(destinationPath);
-  const archive = require('archiver')('zip', {
+  const archive = archiver('zip', {
     zlib: { level: zlib.constants.Z_BEST_COMPRESSION }
   });
 
@@ -41,8 +39,9 @@ const compress = (source, destination) => {
   }
 
   archive.pipe(output);
-
   archive.finalize();
 };
 
-compress(inputPath, compressedFile);
+module.exports = {
+  compress
+}

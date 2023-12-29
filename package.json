@@ -1,8 +1,11 @@
 {
-  "name": "compress",
-  "version": "1.0.0",
+  "name": "nodejs_zpi",
+  "version": "1.0.2",
   "description": "打包自动过滤node_modules和前置为.的文件",
   "main": "index.js",
+  "bin": {
+    "compress": "index.js"
+  },
   "keywords": [
     "zlib",
     "文件压缩",

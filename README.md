@@ -11,7 +11,7 @@
 确保你已经安装了Node.js，并且安装了所需的依赖：
 
 ```bash
-npm install -g compress
+npm install -g nodejs_zpi
 ```
 
 ## 运行压缩
