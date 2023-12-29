@@ -1,0 +1,20 @@
+{
+  "name": "compress",
+  "version": "1.0.0",
+  "description": "打包自动过滤node_modules和前置为.的文件",
+  "main": "index.js",
+  "keywords": [
+    "zlib",
+    "文件压缩",
+    "过滤node_modules",
+    "自动压缩文件"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^6.0.1"
+  }
+}
