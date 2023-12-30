@@ -2,37 +2,41 @@
 const fs = require('fs');
 const zlib = require('zlib');
 const path = require('path');
+const archiver = require('archiver');
 
-const inputPath = process.argv[2];
-const compressedFile = inputPath + '.zip';
+const sourcePath = process.argv[2];
 
-const compress = (source, destination) => {
-  const sourcePath = path.join(__dirname, source);
-  const destinationPath = path.join(__dirname, destination);
+const compress = async (sourcePath) => {
+  const destinationPath = sourcePath + '.zip';
 
-  // 检查源文件/目录是否存在
   if (!fs.existsSync(sourcePath)) {
-    console.error(`错误: ${source} 不存在`);
+    console.error(`错误: ${sourcePath} 不存在`);
     return;
   }
 
   const output = fs.createWriteStream(destinationPath);
-  const archive = require('archiver')('zip', {
+  const archive = archiver('zip', {
     zlib: { level: zlib.constants.Z_BEST_COMPRESSION }
   });
 
   output.on('close', () => {
-    console.log(`压缩完成: ${destination}`);
+    console.log(`压缩完成: ${destinationPath}`);
   });
 
   archive.on('error', err => {
     throw err;
   });
 
-  // 如果是文件，则压缩文件
+  archive.on('progress', progressData => {
+    const percent = Math.round((progressData.fs.processedBytes / progressData.fs.totalBytes) * 100);
+    process.stdout.clearLine();
+    process.stdout.cursorTo(0);
+    process.stdout.write(`已压缩 ${percent}%`);
+  });
+
   if (fs.statSync(sourcePath).isFile()) {
     archive.file(sourcePath, { name: path.basename(sourcePath) });
-  } else { // 如果是目录，则压缩目录内容
+  } else {
     archive.glob('**', {
       cwd: sourcePath,
       ignore: ['node_modules/**'],
@@ -42,8 +46,10 @@ const compress = (source, destination) => {
   }
 
   archive.pipe(output);
-
   archive.finalize();
 };
 
-compress(inputPath, compressedFile);
+// 异步执行压缩函数
+(async () => {
+  await compress(sourcePath);
+})();
